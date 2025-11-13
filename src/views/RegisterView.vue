@@ -21,10 +21,13 @@
     if (!event.valid) return;
 
     const formValues = event.values as RegisterFormType;
-    onProcessRegister(formValues);
+    onProcessRegister(formValues, event);
   };
 
-  const onProcessRegister = async (payload: RegisterFormType) => {
+  const onProcessRegister = async (
+    payload: RegisterFormType,
+    event: FormSubmitEvent<Record<string, string>>
+  ) => {
     try {
       await registerAccount(payload);
 
@@ -34,6 +37,8 @@
         detail: "Go to login page to log in to your account",
         life: 2000,
       });
+
+      event.reset();
     } catch (error) {
       let errorMsg;
       if (isAxiosError(error)) {
