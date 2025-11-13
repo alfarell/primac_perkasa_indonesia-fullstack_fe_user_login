@@ -8,7 +8,7 @@ import HomeView from "../views/HomeView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
-import { getAccessToken } from "../libs/auth-storage";
+import { useAuthStore } from "../libs/auth-storage";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -28,13 +28,14 @@ export const router = createRouter({
 });
 
 router.beforeEach((to, _, next) => {
-  const accessToken = getAccessToken();
+  const auth = useAuthStore();
 
   const authRoutes = ["login", "register"];
+  const isAuthRoute = authRoutes.includes(to.name?.toString() || "");
 
-  if (to.meta.authRequired && !accessToken) {
+  if (to.meta.authRequired && !auth.isAuthenticated) {
     next({ name: "login" });
-  } else if (authRoutes.includes(to.name?.toString() || "") && accessToken) {
+  } else if (isAuthRoute && auth.isAuthenticated) {
     next({ name: "home" });
   } else {
     next();

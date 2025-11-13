@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAccessToken } from "./auth-storage";
+import { useAuthStore } from "./auth-storage";
 
 const $axios = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -9,15 +9,15 @@ const $axios = axios.create({
 });
 
 $axios.interceptors.request.use(async (config) => {
-  const accessToken = getAccessToken();
+  const auth = useAuthStore();
 
-  if (accessToken) {
+  if (auth.accessToken) {
     // set authorization token to current request
-    const bearerToken = `Bearer ${accessToken}`;
+    const bearerToken = `Bearer ${auth.accessToken}`;
     config.headers.Authorization = bearerToken;
 
     // set authorization token to next request (as default headers)
-    setAxiosToken(accessToken);
+    setAxiosToken(auth.accessToken);
   }
 
   return config;

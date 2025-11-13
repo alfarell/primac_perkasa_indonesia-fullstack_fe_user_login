@@ -10,13 +10,13 @@
     useToast,
   } from "primevue";
   import { loginSchema, type LoginFormType } from "../validations/login";
-  import { loginAccount } from "../services/auth/service";
-  import { setAccessToken } from "../libs/auth-storage";
   import { isAxiosError } from "axios";
   import type { IErrorResponse } from "../services/base";
   import { router } from "../router";
+  import { useAuthStore } from "../libs/auth-storage";
 
   const toast = useToast();
+  const auth = useAuthStore();
 
   const onSubmitLogin = (event: FormSubmitEvent<Record<string, string>>) => {
     if (!event.valid) return;
@@ -27,10 +27,7 @@
 
   const onProcessLogin = async (payload: LoginFormType) => {
     try {
-      const response = await loginAccount(payload);
-
-      const accessToken = response?.data?.accessToken as string;
-      setAccessToken(accessToken);
+      await auth.handleLogin(payload);
 
       toast.add({
         severity: "success",
