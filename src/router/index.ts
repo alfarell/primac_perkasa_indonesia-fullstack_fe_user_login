@@ -8,6 +8,7 @@ import HomeView from "../views/HomeView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
+import { getAccessToken } from "../libs/auth-storage";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -27,11 +28,13 @@ export const router = createRouter({
 });
 
 router.beforeEach((to, _, next) => {
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = getAccessToken();
+
+  const authRoutes = ["login", "register"];
 
   if (to.meta.authRequired && !accessToken) {
     next({ name: "login" });
-  } else if (to.name === "login" && accessToken) {
+  } else if (authRoutes.includes(to.name?.toString() || "") && accessToken) {
     next({ name: "home" });
   } else {
     next();
