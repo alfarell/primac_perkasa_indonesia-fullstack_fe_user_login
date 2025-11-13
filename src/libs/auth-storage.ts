@@ -39,5 +39,9 @@ export const useAuthStore = defineStore("auth", {
         this.userData = response.data;
       }
     },
+
+    handleLogout() {
+      this.$reset();
+    },
   },
 });
